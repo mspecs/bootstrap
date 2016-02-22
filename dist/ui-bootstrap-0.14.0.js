@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2015-09-26
+ * Version: 0.14.0 - 2016-02-22
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -4951,9 +4951,9 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position'])
 
               //typeahead is open and an "interesting" key was pressed
               if (scope.matches.length === 0 || HOT_KEYS.indexOf(evt.which) === -1) {
-                if (evt.which === 13) {
-                  evt.preventDefault();
-                }
+                // if (evt.which === 13) {
+                //   evt.preventDefault();
+                // }
                 return;
               }
 
