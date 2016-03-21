@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2016-02-22
+ * Version: 0.14.0 - 2016-03-21
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -2494,7 +2494,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
         }
       });
 
-      function removeModalWindow(modalInstance, elementToReceiveFocus) {
+      function removeModalWindow(modalInstance, elementToReceiveFocus, noGC) {
         var body = $document.find('body').eq(0);
         var modalWindow = openedWindows.get(modalInstance).value;
 
@@ -2507,7 +2507,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           body.toggleClass(modalBodyClass, openedClasses.hasKey(modalBodyClass));
           toggleTopWindowClass(true);
         });
-        checkRemoveBackdrop();
+        checkRemoveBackdrop(noGC);
 
         //move focus to specified element if available, or else to body
         if (elementToReceiveFocus && elementToReceiveFocus.focus) {
@@ -2527,11 +2527,11 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
         }
       }
 
-      function checkRemoveBackdrop() {
+      function checkRemoveBackdrop(noGC) {
           //remove backdrop if no longer needed
           if (backdropDomEl && backdropIndex() == -1) {
             var backdropScopeRef = backdropScope;
-            removeAfterAnimate(backdropDomEl, backdropScope, function() {
+            removeAfterAnimate(backdropDomEl, backdropScope, noGC, function() {
               backdropScopeRef = null;
             });
             backdropDomEl = undefined;
@@ -2539,7 +2539,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           }
       }
 
-      function removeAfterAnimate(domEl, scope, done) {
+      function removeAfterAnimate(domEl, scope, noGC, done) {
         var asyncDeferred;
         var asyncPromise = null;
         var setIsAsync = function() {
@@ -2574,7 +2574,16 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           } else {
             $animate.leave(domEl);
           }
-          scope.$destroy();
+          //Mspx gc hax
+          if (noGC) {
+            !scope.$destroyGrandParent && (scope.__proto__.$destroyGrandParent = function() {
+              scope.$destroy();
+            });
+          } else {
+            scope.$destroyGrandParent && scope.$destroyGrandParent();
+            scope.$destroy();
+          }
+
           if (done) {
             done();
           }
@@ -2700,6 +2709,28 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
         return !modalWindow;
       };
 
+      $modalStack.closeNoGC = function(modalInstance, result) {
+        var modalWindow = openedWindows.get(modalInstance);
+        if (modalWindow && broadcastClosing(modalWindow, result, true)) {
+          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+          modalWindow.value.deferred.resolve(result);
+          removeModalWindow(modalInstance, modalWindow.value.modalOpener, true);
+          return true;
+        }
+        return !modalWindow;
+      };
+
+      $modalStack.dismissNoGC = function(modalInstance, reason) {
+        var modalWindow = openedWindows.get(modalInstance);
+        if (modalWindow && broadcastClosing(modalWindow, reason, false)) {
+          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+          modalWindow.value.deferred.reject(reason);
+          removeModalWindow(modalInstance, modalWindow.value.modalOpener, true);
+          return true;
+        }
+        return !modalWindow;
+      };
+
       $modalStack.dismissAll = function(reason) {
         var topModal = this.getTop();
         while (topModal && this.dismiss(topModal.key, reason)) {
@@ -2817,6 +2848,12 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
               },
               dismiss: function (reason) {
                 return $modalStack.dismiss(modalInstance, reason);
+              },
+              closeNoGC: function (result) {
+                return $modalStack.closeNoGC(modalInstance, result);
+              },
+              dismissNoGC: function (reason) {
+                return $modalStack.dismissNoGC(modalInstance, reason);
               }
             };
 
@@ -2843,7 +2880,9 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
 
                 var modalScope = (modalOptions.scope || $rootScope).$new();
                 modalScope.$close = modalInstance.close;
+                modalScope.$closeNoGC = modalInstance.closeNoGC;
                 modalScope.$dismiss = modalInstance.dismiss;
+                modalScope.$dismissNoGC = modalInstance.dismissNoGC;
 
                 modalScope.$on('$destroy', function() {
                   if (!modalScope.$$uibDestructionScheduled) {
