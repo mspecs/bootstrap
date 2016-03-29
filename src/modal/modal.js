@@ -289,6 +289,8 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           toggleTopWindowClass(true);
         });
         checkRemoveBackdrop(noGC);
+        //fix for lonely modal-open class being left on the body after modal has been closed, bug yet to be fixed in lib
+        $('body').removeClass('modal-open');
 
         //move focus to specified element if available, or else to body
         if (elementToReceiveFocus && elementToReceiveFocus.focus) {
