@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2016-03-29
+ * Version: 0.14.0 - 2016-04-28
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -2320,8 +2320,8 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
   }])
 
   .directive('modalWindow', [
-           '$modalStack', '$q', '$animate', '$injector',
-  function($modalStack ,  $q ,  $animate,   $injector) {
+           '$modalStack', '$q', '$animate', '$injector', '$rootScope',
+  function($modalStack ,  $q ,  $animate,   $injector, $rootScope) {
     var $animateCss = null;
 
     if ($injector.has('$animateCss')) {
@@ -2348,7 +2348,15 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           if (modal && modal.value.backdrop && modal.value.backdrop !== 'static' && (evt.target === evt.currentTarget)) {
             evt.preventDefault();
             evt.stopPropagation();
-            $modalStack.dismiss(modal.key, 'backdrop click');
+
+            // quick hack to open mspx modal if closed
+            if ($rootScope.mspxCloseConfirmationModal) {
+              $rootScope.mspxCloseConfirmationModal().then(function() {
+                $modalStack.dismiss(modal.key, 'backdrop click');
+              });
+            } else {
+              $modalStack.dismiss(modal.key, 'backdrop click');
+            }
           }
         };
 

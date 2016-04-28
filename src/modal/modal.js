@@ -101,8 +101,8 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
   }])
 
   .directive('modalWindow', [
-           '$modalStack', '$q', '$animate', '$injector',
-  function($modalStack ,  $q ,  $animate,   $injector) {
+           '$modalStack', '$q', '$animate', '$injector', '$rootScope',
+  function($modalStack ,  $q ,  $animate,   $injector, $rootScope) {
     var $animateCss = null;
 
     if ($injector.has('$animateCss')) {
@@ -129,7 +129,15 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap'])
           if (modal && modal.value.backdrop && modal.value.backdrop !== 'static' && (evt.target === evt.currentTarget)) {
             evt.preventDefault();
             evt.stopPropagation();
-            $modalStack.dismiss(modal.key, 'backdrop click');
+
+            // quick hack to open mspx modal if closed
+            if ($rootScope.mspxCloseConfirmationModal) {
+              $rootScope.mspxCloseConfirmationModal().then(function() {
+                $modalStack.dismiss(modal.key, 'backdrop click');
+              });
+            } else {
+              $modalStack.dismiss(modal.key, 'backdrop click');
+            }
           }
         };
 
