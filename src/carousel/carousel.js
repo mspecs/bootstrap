@@ -102,6 +102,7 @@ angular.module('ui.bootstrap.carousel', [])
       return;
     }
 
+    $scope.swipe({index: newIndex});
     return self.select(getSlideByIndex(newIndex), 'next');
   };
 
@@ -113,6 +114,7 @@ angular.module('ui.bootstrap.carousel', [])
       return;
     }
 
+    $scope.swipe({index: newIndex});
     return self.select(getSlideByIndex(newIndex), 'prev');
   };
 
@@ -258,7 +260,8 @@ angular.module('ui.bootstrap.carousel', [])
       interval: '=',
       noTransition: '=',
       noPause: '=',
-      noWrap: '&'
+      noWrap: '&',
+      swipe: '&'
     }
   };
 }])

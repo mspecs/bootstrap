@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2016-04-28
+ * Version: 0.14.0 - 2016-09-28
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -667,6 +667,7 @@ angular.module('ui.bootstrap.carousel', [])
       return;
     }
 
+    $scope.swipe({index: newIndex});
     return self.select(getSlideByIndex(newIndex), 'next');
   };
 
@@ -678,6 +679,7 @@ angular.module('ui.bootstrap.carousel', [])
       return;
     }
 
+    $scope.swipe({index: newIndex});
     return self.select(getSlideByIndex(newIndex), 'prev');
   };
 
@@ -823,7 +825,8 @@ angular.module('ui.bootstrap.carousel', [])
       interval: '=',
       noTransition: '=',
       noPause: '=',
-      noWrap: '&'
+      noWrap: '&',
+      swipe: '&'
     }
   };
 }])
