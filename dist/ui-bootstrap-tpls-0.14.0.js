@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2016-09-28
+ * Version: 0.14.0 - 2016-09-30
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.tpls", "ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -592,7 +592,7 @@ angular.module('ui.bootstrap.carousel', [])
       direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
     }
     //Prevent this user-triggered transition from occurring if there is already one in progress
-    if (nextSlide && nextSlide !== self.currentSlide && !$scope.$currentTransition) {
+    if (nextSlide && nextSlide !== self.currentSlide) {
       goNext(nextSlide, nextIndex, direction);
     }
   };
@@ -886,7 +886,8 @@ function CarouselDemoCtrl($scope) {
     scope: {
       active: '=?',
       actual: '=?',
-      index: '=?'
+      index: '=?',
+      initIndex: '=?'
     },
     link: function (scope, element, attrs, carouselCtrl) {
       carouselCtrl.addSlide(scope, element);
@@ -900,6 +901,10 @@ function CarouselDemoCtrl($scope) {
           carouselCtrl.select(scope);
         }
       });
+
+      if (scope.index === scope.initIndex) {
+        carouselCtrl.select(scope);
+      }
     }
   };
 })

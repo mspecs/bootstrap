@@ -26,7 +26,7 @@ angular.module('ui.bootstrap.carousel', [])
       direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
     }
     //Prevent this user-triggered transition from occurring if there is already one in progress
-    if (nextSlide && nextSlide !== self.currentSlide && !$scope.$currentTransition) {
+    if (nextSlide && nextSlide !== self.currentSlide) {
       goNext(nextSlide, nextIndex, direction);
     }
   };
@@ -320,7 +320,8 @@ function CarouselDemoCtrl($scope) {
     scope: {
       active: '=?',
       actual: '=?',
-      index: '=?'
+      index: '=?',
+      initIndex: '=?'
     },
     link: function (scope, element, attrs, carouselCtrl) {
       carouselCtrl.addSlide(scope, element);
@@ -334,6 +335,10 @@ function CarouselDemoCtrl($scope) {
           carouselCtrl.select(scope);
         }
       });
+
+      if (scope.index === scope.initIndex) {
+        carouselCtrl.select(scope);
+      }
     }
   };
 })
