@@ -95,7 +95,8 @@ angular.module('ui.bootstrap.tabs', [])
     transclude: true,
     replace: true,
     scope: {
-      type: '@'
+      type: '@',
+      useIf: '=?'
     },
     controller: 'TabsetController',
     templateUrl: 'template/tabs/tabset.html',

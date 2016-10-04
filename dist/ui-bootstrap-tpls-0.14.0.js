@@ -2,7 +2,7 @@
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
 
- * Version: 0.14.0 - 2016-09-30
+ * Version: 0.14.0 - 2016-10-04
  * License: MIT
  */
 angular.module("ui.bootstrap", ["ui.bootstrap.tpls", "ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
@@ -4205,7 +4205,8 @@ angular.module('ui.bootstrap.tabs', [])
     transclude: true,
     replace: true,
     scope: {
-      type: '@'
+      type: '@',
+      useIf: '=?'
     },
     controller: 'TabsetController',
     templateUrl: 'template/tabs/tabset.html',
@@ -5395,9 +5396,17 @@ angular.module("template/tabs/tabset.html", []).run(["$templateCache", function(
   $templateCache.put("template/tabs/tabset.html",
     "<div>\n" +
     "  <ul class=\"nav nav-{{type || 'tabs'}}\" ng-class=\"{'nav-stacked': vertical, 'nav-justified': justified}\" ng-transclude></ul>\n" +
-    "  <div class=\"tab-content\">\n" +
+    "  <div class=\"tab-content\" ng-if=\"!useIf\">\n" +
     "    <div class=\"tab-pane\" \n" +
     "         ng-repeat=\"tab in tabs\" \n" +
+    "         ng-class=\"{active: tab.active}\"\n" +
+    "         tab-content-transclude=\"tab\">\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"tab-content\" ng-if=\"useIf\">\n" +
+    "    <div class=\"tab-pane\" \n" +
+    "         ng-repeat=\"tab in tabs\" \n" +
+    "         ng-if=\"tab.active\"\n" +
     "         ng-class=\"{active: tab.active}\"\n" +
     "         tab-content-transclude=\"tab\">\n" +
     "    </div>\n" +
